@@ -717,11 +717,15 @@ def main():
                 state.announced = ymd(target)
                 remember_zero()
                 raise_alert(cfg, state, tg, text)
-                if not state.seatwatch:
+                # seatchangeall 도 계속 조회해야 의미가 있는 기능이다. 이것만
+                # 켜고 seatwatch 는 꺼둔 채로 쓰면, 알리자마자 감시 대상이
+                # 지워져서 테스트 자체가 안 됐다 - 둘 중 하나라도 켜져 있으면 유지한다.
+                if not (state.seatwatch or state.seat_change_all):
                     state.target = None
                     state.save("done")
                     continue
-                tg.send("이어서 빈자리를 지켜봅니다. 끄려면 /seatwatch off")
+                tg.send("이어서 빈자리를 지켜봅니다. 끄려면 /seatwatch off"
+                        + (" (seatchangeall 도 켜져 있습니다)" if state.seat_change_all else ""))
             elif state.seatwatch or state.seat_change_all:
                 wd.mark("좌석 조회")
                 free_now = check_seats(cfg, fetcher, hits, pump)
