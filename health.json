@@ -1,19 +1,17 @@
 {
   "status": "running",
-  "run_id": "42569339554",
+  "run_id": "42581650234",
   "run_event": "workflow_dispatch",
-  "started": "2026-11-09 14:48:23",
-  "last_seen": "2026-11-09 16:48:36",
-  "checks": 511,
-  "gap_at_start_sec": 31,
-  "prev_run": "42564661424",
+  "started": "2026-11-09 16:48:59",
+  "last_seen": "2026-11-09 16:49:01",
+  "checks": 0,
+  "gap_at_start_sec": 23,
+  "prev_run": "42569339554",
   "relay": {
-    "requested_at": "2026-11-09 16:48:32",
-    "ok": true,
-    "tries": 1
+    "requested_at": null,
+    "ok": null,
+    "tries": 0
   },
   "error_count": 0,
-  "last_error": null,
-  "stage": "다음 조회 대기",
-  "stage_idle_sec": 0
+  "last_error": null
 }
