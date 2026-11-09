@@ -576,28 +576,46 @@ def main():
 
     def status_text():
         _ok, why = should_watch(cfg, state.target, datetime.now(KST))
-        out = "%s\n조회 %d회 / 이 세션 종료까지 %d분" % (
-            why, checks, max(0, int((deadline - datetime.now(KST)).total_seconds() // 60)))
-        if state.ack_date is not None:
-            out += "\n미확인 알림 있음 (%d번 보냄). /ok 로 멈춥니다." % state.ack_count
-        if state.seatwatch:
-            out += "\n빈자리 지켜보기: 켜짐"
-        if state.seat_change_all:
-            out += "\n[테스트] 잔여석 전체 변화 알림: 켜짐"
-        if not cfg.health_enabled:
-            out += "\nhealth 체크: 꺼짐 (저장소 변수 HEALTH=0)"
+        if _ok and state.target:
+            d = state.target
+            head = "📅 %s (%s) 감시 중 · D-%d" % (
+                d.strftime("%Y%m%d"), WDAY[d.weekday()],
+                (d - datetime.now(KST).date()).days)
         else:
-            out += "\nhealth 체크: %s%s" % (
+            head = why
+        lines = [head, "🎬 " + ", ".join(cfg.keywords)]
+
+        lines.append("")
+        lines.append("👀 빈자리 지켜보기: %s" % ("켜짐" if state.seatwatch else "꺼짐"))
+        if state.seat_change_all:
+            lines.append("🧪 잔여석 전체 변화 알림(테스트): 켜짐")
+
+        if state.ack_date is not None:
+            lines.append("")
+            lines.append("⚠️ 미확인 알림 있음 (%d번 보냄) · /ok 로 멈춤" % state.ack_count)
+
+        lines.append("")
+        if not cfg.health_enabled:
+            lines.append("❤️ health 체크: 꺼짐 (저장소 변수 HEALTH=0)")
+        else:
+            lines.append("❤️ health 체크: %s%s" % (
                 "켜짐" if health.active else "꺼짐 (/health on 으로 켜기)",
-                " / 외부 ping 사용" if (health.active and cfg.healthcheck_url) else "")
+                " · 외부 ping 사용" if (health.active and cfg.healthcheck_url) else ""))
         r = health.relay
         if r["requested_at"]:
-            out += "\n다음 workflow run 요청: %s %s" % (r["requested_at"][11:],
-                                                 "성공" if r["ok"] else "실패")
+            lines.append("🔁 다음 workflow run: %s %s" % (r["requested_at"][11:],
+                                                   "성공" if r["ok"] else "실패"))
         else:
             left = max(0, int((relay_at - datetime.now(KST)).total_seconds() // 60))
-            out += "\n다음 workflow run 요청 예정: %s (%d분 뒤)" % (relay_at.strftime("%H:%M"), left)
-        return out + ("\n" + cfg.site_url if cfg.site_url else "")
+            lines.append("🔁 다음 workflow run 예정: %s · %d분 뒤" % (relay_at.strftime("%H:%M"), left))
+        remaining = max(0, int((deadline - datetime.now(KST)).total_seconds() // 60))
+        cur_interval = interval_for(cfg, datetime.now(KST))
+        lines.append("⏱ 조회 %d회 · %d초 간격 · 종료까지 %d분" % (checks, cur_interval, remaining))
+
+        if cfg.site_url:
+            lines.append("")
+            lines.append(cfg.site_url)
+        return "\n".join(lines)
 
     if cfg.notify_start:
         tg.send("감시 프로세스가 올라왔습니다.\n" + status_text())
