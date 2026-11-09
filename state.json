@@ -1,0 +1,15 @@
+{
+  "target_date": "20261110",
+  "tg_offset": 726551707,
+  "seatwatch": false,
+  "health_off": false,
+  "announced": null,
+  "zero_slots": [],
+  "slot_ids": {},
+  "id_since": null,
+  "id_anomalies": 0,
+  "ack_date": null,
+  "ack_count": 0,
+  "trace_until": null,
+  "updated_at": "2026-11-09 13:40:46 KST"
+}
