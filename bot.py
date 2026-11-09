@@ -440,17 +440,21 @@ def handle_command(text, state, tg, status_fn, now_fn, health_fn=None):
     if head in ("/seatwatch", "seatwatch"):
         on = (arg or "").lower().strip() not in ("off", "0", "stop")
         state.seatwatch = on
+        revived = _revive_if_cleared(state, tg) if on else None
         state.save("seatwatch %s" % ("on" if on else "off"))
-        tg.send("찾은 뒤에도 자리가 나는지 계속 지켜봅니다." if on
-                else "자리 지켜보기를 껐습니다. 찾으면 알리고 끝냅니다.")
+        if not revived:
+            tg.send("찾은 뒤에도 자리가 나는지 계속 지켜봅니다." if on
+                    else "자리 지켜보기를 껐습니다. 찾으면 알리고 끝냅니다.")
         return False
 
     if head in ("/seatchangeall", "seatchangeall"):
         on = (arg or "").lower().strip() not in ("off", "0", "stop")
         state.seat_change_all = on
+        revived = _revive_if_cleared(state, tg) if on else None
         state.save("seatchangeall %s" % ("on" if on else "off"))
-        tg.send("테스트용: 잔여석이 조금이라도 바뀌면(늘든 줄든) 매번 알립니다." if on
-                else "잔여석 전체 변화 알림(테스트용)을 껐습니다.")
+        if not revived:
+            tg.send("테스트용: 잔여석이 조금이라도 바뀌면(늘든 줄든) 매번 알립니다." if on
+                    else "잔여석 전체 변화 알림(테스트용)을 껐습니다.")
         return False
 
     if head in ("/stop", "stop"):
@@ -473,6 +477,32 @@ def handle_command(text, state, tg, status_fn, now_fn, health_fn=None):
 
     tg.send("모르는 명령입니다.\n\n" + HELP)
     return False
+
+
+def _revive_if_cleared(state, tg):
+    """
+    /seatwatch, /seatchangeall 은 둘 다 "찾은 뒤에도 계속 지켜볼지" 를 켜는
+    명령인데, 이미 찾아서 알리고 나면 state.target 이 비워진다(watch.py 원래
+    설계 - 끄 상태에서 찾으면 한 번 알리고 끝). 그 뒤에 이 명령들을 켜봐야
+    지킬 대상이 없어서 아무 효과가 없었다 - 두 명령이 독립적이어야 하는데
+    순서에 의존하는 상태였다.
+
+    state.target 은 비워져도 state.announced(그 날짜 문자열)는 안 비워지므로,
+    그 값으로 감시를 그 자리에서 되살린다. target_changed 처럼 True 를
+    반환하지 않는다 - 그러면 호출부가 slot_ids/announced 까지 통째로 리셋해서
+    처음부터 다시 찾게 된다. 이미 찾은 상태를 이어가는 것이 목적이다.
+
+    반환: 되살렸으면 True.
+    """
+    if state.target is not None or not state.announced:
+        return False
+    d = parse_date(state.announced)
+    if d is None:
+        return False
+    state.target = d
+    tg.send("날짜 %s 감시를 다시 켭니다. (이미 찾아서 꺼져 있던 걸 되살렸습니다)"
+            % state.announced)
+    return True
 
 
 def _set_trace(arg, state, tg):

@@ -30,6 +30,7 @@ ATTR_RE = re.compile(r'data-([a-zA-Z]+)="([^"]*)"')
 TIME_OPEN_RE = re.compile(r'<div class="time[^"]*"((?:\s+data-[a-zA-Z]+="[^"]*")+)')
 FROM_TO_RE = re.compile(r'<span class="from">(\d{1,2}:\d{2})<span class="to">~(\d{1,2}:\d{2})</span>')
 SEATS_RE = re.compile(r'(\d{1,4})\s*석')
+DUB_RE = re.compile(r'aria-label="더빙"')
 TAG_RE = re.compile(r"<[^>]+>")
 
 
@@ -134,10 +135,16 @@ def parse_screen_plan(body):
                 soldout = "매진" in seg
                 seats = 0 if soldout else None
 
+            # 더빙판은 영화 코드가 자막판과 같아서 한 응답 안에 섞여 나오고,
+            # <span class="screen-attribute dub" aria-label="더빙">더</span>
+            # 뱃지로만 구분된다. 이 뱃지를 안 읽으면 더빙 회차가 일반판과
+            # 구분 없이 섞여 나온다 - 실제로 그래서 못 알아봤다.
+            dub = bool(DUB_RE.search(seg))
+
             out.append({
                 "movie": movie, "screen": screen, "capacity": capacity,
                 "screenplanid": sid, "time": time_range,
-                "seats": seats, "soldout": soldout,
+                "seats": seats, "soldout": soldout, "dub": dub,
                 "attrs": attrs,
             })
     return out
@@ -160,8 +167,12 @@ def to_items(plan_rows):
     order = []                       # (movie, screen_label) 순서 보존
     by_group = {}
     for row in plan_rows:
+        # watch.py 가 쓰던 원래 목록 페이지는 더빙판을 "영화명 (더빙)" 이라는
+        # 별도 항목으로 줬다. 팝업은 한 영화 코드 안에 뱃지로만 섞어 주므로,
+        # 여기서 이름을 갈라 그 표시 관례를 그대로 맞춘다.
+        movie = row["movie"] + " (더빙)" if row["dub"] else row["movie"]
         label = "%s (%d석)" % (row["screen"], row["capacity"])
-        gkey = (row["movie"], label)
+        gkey = (movie, label)
         if gkey not in by_group:
             by_group[gkey] = []
             order.append(gkey)
