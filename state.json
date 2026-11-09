@@ -4,8 +4,15 @@
   "seatwatch": false,
   "seat_change_all": false,
   "health_off": false,
-  "announced": null,
-  "zero_slots": [],
+  "announced": "20261111",
+  "zero_slots": [
+    "id:1111611",
+    "id:1111612",
+    "id:1111613",
+    "id:1111633",
+    "id:1111635",
+    "id:1111640"
+  ],
   "slot_ids": {
     "극장판 치이카와: 인어 섬의 비밀|(RESERVE)3관 (69석)|10:10~11:56": "1111611",
     "극장판 치이카와: 인어 섬의 비밀|(RESERVE)3관 (69석)|14:30~16:16": "1111612",
@@ -64,8 +71,8 @@
   },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 0,
-  "ack_date": null,
-  "ack_count": 0,
+  "ack_date": "20261111",
+  "ack_count": 1,
   "trace_until": null,
-  "updated_at": "2026-11-09 14:13:10 KST"
+  "updated_at": "2026-11-09 14:13:11 KST"
 }
