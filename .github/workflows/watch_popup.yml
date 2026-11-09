@@ -1,0 +1,53 @@
+name: watch_popup
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: "날짜 (20261115). 비우면 텔레그램 /watch 로 지정"
+        required: false
+        type: string
+
+  # watch.py 와 똑같이 6시간 백업 + 스스로 이어받기. 저장소가 분리돼 있어
+  # watch.yml 의 concurrency 와는 전혀 겹치지 않는다.
+  schedule:
+    - cron: "20 15 * * *"   # 00:20 KST
+    - cron: "20 21 * * *"   # 06:20 KST
+    - cron: "20 3 * * *"    # 12:20 KST
+    - cron: "20 9 * * *"    # 18:20 KST
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: watch_popup
+  cancel-in-progress: true
+
+jobs:
+  watch_popup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 358
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - run: python watch_popup.py
+        env:
+          THEATER_CODE: ${{ vars.THEATER_CODE || '1001' }}
+          KEYWORDS: ${{ secrets.KEYWORDS }}
+          TARGET_DATE: ${{ inputs.target_date }}
+          POLL_SEC: ${{ vars.POLL_SEC || '20' }}
+          MAX_RUN_MIN: "355"
+          RELAY_AFTER_MIN: ${{ vars.RELAY_AFTER_MIN || '120' }}
+          RELAY_WORKFLOW: "watch_popup.yml"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
