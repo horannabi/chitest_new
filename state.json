@@ -1,12 +1,13 @@
 {
   "target_date": "20261111",
-  "tg_offset": 726551749,
+  "tg_offset": 726551750,
   "seatwatch": true,
   "seat_change_all": true,
   "health_off": false,
   "announced": "20261111",
   "zero_slots": [
     "id:1111611",
+    "id:1111612",
     "id:1111613",
     "id:1111633",
     "id:1111635",
@@ -73,5 +74,5 @@
   "ack_date": null,
   "ack_count": 0,
   "trace_until": null,
-  "updated_at": "2026-11-10 08:51:24 KST"
+  "updated_at": "2026-11-10 08:51:28 KST"
 }
