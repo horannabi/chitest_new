@@ -3,7 +3,7 @@
   "run_id": "42563088907",
   "run_event": "workflow_dispatch",
   "started": "2026-11-09 13:40:37",
-  "last_seen": "2026-11-09 13:41:41",
+  "last_seen": "2026-11-09 13:42:42",
   "checks": 1,
   "gap_at_start_sec": null,
   "prev_run": null,
@@ -15,5 +15,5 @@
   "error_count": 0,
   "last_error": null,
   "stage": "알림 재전송",
-  "stage_idle_sec": 3
+  "stage_idle_sec": 0
 }
