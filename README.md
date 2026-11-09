@@ -16,7 +16,7 @@
 | 시간표 소스 | `/Theater/MovieTable2` (메인 목록) | `/popup/ReserveMovieList` + `/popup/ReserveScreenPlan` |
 | 잔여석 | 목록 숫자 그대로, 매진/5석 이하만 좌석 배치도로 재확인(`seats.py`) | 팝업이 이미 정확한 숫자를 줘서 좌석 배치도 재확인이 불필요 - 그래서 `seats.py` 가 없다 |
 | 직접 접속 막히면 | `r.jina.ai` 로 우회 | **우회 없음** - 우회로는 GET 렌더링 전용이라 이 두 엔드포인트처럼 POST 가 필요한 호출은 못 넘긴다 |
-| 그 외 전부 (State/Telegram/명령/Health/Watchdog/`/ok` 반복/`/seatwatch`/`/trace`/회차 ID 이상 검증/이어받기) | 동일 | **코드 그대로** (`bot.py`, `health.py` 는 byte 단위로 동일하게 복사) |
+| 그 외 전부 (State/Telegram/명령/Health/Watchdog/`/ok` 반복/`/seatwatch`/`/trace`/회차 ID 이상 검증/이어받기) | 동일 | **코드 그대로** (아래 `/seatchangeall` 하나만 예외) |
 
 ## 파일
 
@@ -27,9 +27,21 @@
 - `watch_popup.py` — `watch.py` 의 포크. `Fetcher`/`parse`/`contains_keyword`/
   `check_seats` 만 새로 짰고, 나머지(Config 나머지 필드, main() 전체 흐름,
   명령 처리 연결)는 동일하다.
-- `bot.py`, `health.py` — `chitest` 의 것과 완전히 동일(State, Telegram,
-  handle_command, Health, Watchdog). 데이터 소스와 무관한 부분이라 그대로
-  복사했다.
+- `health.py` — `chitest` 의 것과 완전히 동일. 데이터 소스와 무관한 부분이라
+  그대로 복사했다.
+- `bot.py` — `chitest` 의 것에서 `/seatchangeall` 명령 하나만 추가한 것.
+  이 저장소에서 테스트용으로 요청받아 넣은 기능이라 유일하게 갈라진 지점이다.
+
+### `/seatchangeall` (테스트 전용, chitest 에는 없음)
+
+`/seatwatch` 는 "매진이던 회차에 자리가 날 때"만 알린다. 이 명령을 켜면
+매진 여부와 무관하게 **잔여석이 조금이라도 바뀌면(늘든 줄든) 매번** 알린다.
+`/seatwatch` 와 독립적으로 켜고 끌 수 있고, 기본값은 꺼짐이다.
+
+```
+/seatchangeall on
+/seatchangeall off
+```
 
 검증: 실제로 받았던 응답(조조+더빙 뱃지가 낀 가장 까다로운 회차 포함)을
 픽스처로 저장해 파싱부터 `observe_slots`/`check_seats`/매진 해제 감지/신규

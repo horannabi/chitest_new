@@ -38,6 +38,8 @@ HELP = """사용법
 /health off       생존 기록·외부 ping 끄기 (/health on 으로 켜기)
 /seatwatch on     찾은 뒤에도 자리 나는지 계속 지켜보기
 /seatwatch off    끄기
+/seatchangeall on   (테스트용) 잔여석이 조금이라도 바뀌면 매번 알림
+/seatchangeall off  끄기
 /trace on         매 조회마다 한 줄씩 보고 (5분 뒤 자동 종료)
 /trace on 30      30분 동안 유지
 /trace off        끄기
@@ -105,6 +107,9 @@ class State:
         self.tg_offset = 0          # 처리한 텔레그램 update_id
         self.trace_until = None     # datetime | None. 이 시각까지 매 조회를 보고
         self.seatwatch = False      # 찾은 뒤에도 자리가 나는지 계속 지켜볼지
+        # 테스트용. 켜면 매진 여부와 무관하게 잔여석이 조금이라도 바뀌면(늘든
+        # 줄든) 매번 알린다. watch.py 에는 없는, chitest_new 에서만 추가된 기능.
+        self.seat_change_all = False
         self.health_off = False     # True 면 생존 기록/외부 ping 을 하지 않는다 (/health off)
         # 세션이 바뀌어도 이어가야 하는 진행 상황.
         # 메모리에만 두면 이어받을 때마다 "찾았습니다" 를 다시 보내게 된다.
@@ -148,6 +153,7 @@ class State:
         self.tg_offset = int(data.get("tg_offset") or 0)
 
         self.seatwatch = bool(data.get("seatwatch"))
+        self.seat_change_all = bool(data.get("seat_change_all"))
         self.health_off = bool(data.get("health_off"))
         self.announced = data.get("announced") or None
         self.zero_slots = set(str(k) for k in (data.get("zero_slots") or []))
@@ -232,6 +238,7 @@ class State:
             "target_date": self.target.strftime("%Y%m%d") if self.target else None,
             "tg_offset": self.tg_offset,
             "seatwatch": self.seatwatch,
+            "seat_change_all": self.seat_change_all,
             "health_off": self.health_off,
             "announced": self.announced,
             "zero_slots": sorted(self.zero_slots),
@@ -436,6 +443,14 @@ def handle_command(text, state, tg, status_fn, now_fn, health_fn=None):
         state.save("seatwatch %s" % ("on" if on else "off"))
         tg.send("찾은 뒤에도 자리가 나는지 계속 지켜봅니다." if on
                 else "자리 지켜보기를 껐습니다. 찾으면 알리고 끝냅니다.")
+        return False
+
+    if head in ("/seatchangeall", "seatchangeall"):
+        on = (arg or "").lower().strip() not in ("off", "0", "stop")
+        state.seat_change_all = on
+        state.save("seatchangeall %s" % ("on" if on else "off"))
+        tg.send("테스트용: 잔여석이 조금이라도 바뀌면(늘든 줄든) 매번 알립니다." if on
+                else "잔여석 전체 변화 알림(테스트용)을 껐습니다.")
         return False
 
     if head in ("/stop", "stop"):

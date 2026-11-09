@@ -582,6 +582,8 @@ def main():
             out += "\n미확인 알림 있음 (%d번 보냄). /ok 로 멈춥니다." % state.ack_count
         if state.seatwatch:
             out += "\n빈자리 지켜보기: 켜짐"
+        if state.seat_change_all:
+            out += "\n[테스트] 잔여석 전체 변화 알림: 켜짐"
         if not cfg.health_enabled:
             out += "\nhealth 체크: 꺼짐 (저장소 변수 HEALTH=0)"
         else:
@@ -720,11 +722,29 @@ def main():
                     state.save("done")
                     continue
                 tg.send("이어서 빈자리를 지켜봅니다. 끄려면 /seatwatch off")
-            elif state.seatwatch:
+            elif state.seatwatch or state.seat_change_all:
                 wd.mark("좌석 조회")
                 free_now = check_seats(cfg, fetcher, hits, pump)
                 if target_changed[0]:
                     continue
+
+                # 테스트용: 매진 여부와 무관하게 잔여석이 조금이라도 바뀌면 전부
+                # 알린다. opened 판정(아래)이 free_before 를 쓰므로, 갱신하기
+                # 전인 지금 비교해야 한다. 새로 생긴 회차(added)는 따로 알리므로
+                # 여기서는 "이전에도 알고 있던" 회차만 본다.
+                if state.seat_change_all:
+                    labels = {slot_key(it, g, s): "%s %s %s" % (it["name"], g["name"], s["time"])
+                             for it in hits for g in it["groups"] for s in g["slots"]}
+                    changed = [(k, free_before[k], v) for k, v in free_now.items()
+                              if k in free_before and free_before[k] != v]
+                    if changed:
+                        log("[테스트] 잔여석 변화 %d건" % len(changed))
+                        lines = ["%s  %s -> %s" % (labels.get(k, k), old, new)
+                                for k, old, new in changed]
+                        tg.send("[테스트] 잔여석 변화 %d건\n날짜 %s (%s)\n\n%s"
+                                % (len(changed), target.strftime("%Y%m%d"),
+                                   WDAY[target.weekday()], "\n".join(lines)))
+
                 opened = [k for k, v in free_now.items()
                           if v > 0 and free_before.get(k) == 0]
                 free_before = dict(free_before, **free_now)
