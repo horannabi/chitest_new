@@ -122,14 +122,60 @@ def parse_screen_plan(body):
             ft = FROM_TO_RE.search(seg)
             time_range = "%s~%s" % ft.groups() if ft else "?"
 
-            soldout = "매진" in seg
+            # 정확한 숫자가 있으면 그것을 믿는다 - 글자("매진")와 숫자가 둘 다
+            # 있는데 서로 어긋나는 경우, 좌석이 실제로 풀렸는데도 "매진" 글자
+            # 때문에 묻혀서 알림을 놓치면 안 된다. 숫자가 아예 없을 때만
+            # "매진" 글자에 기댄다.
             sm = SEATS_RE.search(seg)
-            seats = int(sm.group(1)) if sm else (0 if soldout else None)
+            if sm:
+                seats = int(sm.group(1))
+                soldout = seats == 0
+            else:
+                soldout = "매진" in seg
+                seats = 0 if soldout else None
 
             out.append({
                 "movie": movie, "screen": screen, "capacity": capacity,
                 "screenplanid": sid, "time": time_range,
-                "seats": seats, "soldout": soldout or seats == 0,
+                "seats": seats, "soldout": soldout,
                 "attrs": attrs,
             })
     return out
+
+
+def to_items(plan_rows):
+    """
+    parse_screen_plan() 의 평평한 회차 목록 ->
+    watch.py 의 parse_html() 과 똑같은 모양 [{name, groups:[{name, slots:[...]}]}].
+
+    이렇게 모양을 맞춰 두면 watch.py 에서 그대로 가져온 match_keywords,
+    slot_key, observe_slots, format_items, raise_alert 등을 한 글자도
+    고치지 않고 그대로 쓸 수 있다. "시간표를 가져오는 코드"만 바뀐 것이지,
+    그 뒤의 판단/알림 로직은 바뀐 게 없다는 뜻이다.
+
+    note 는 "138/140" 또는 "매진" - seats.py 의 list_count()/needs_closer_look()
+    가 읽던 바로 그 형식이다(다만 이 소스는 애초에 정확한 숫자를 주므로
+    좌석 배치도를 따로 셀 필요가 없다. watch_popup.py 쪽 설명 참고).
+    """
+    order = []                       # (movie, screen_label) 순서 보존
+    by_group = {}
+    for row in plan_rows:
+        label = "%s (%d석)" % (row["screen"], row["capacity"])
+        gkey = (row["movie"], label)
+        if gkey not in by_group:
+            by_group[gkey] = []
+            order.append(gkey)
+        note = "매진" if row["soldout"] else "%d/%d" % (row["seats"], row["capacity"])
+        by_group[gkey].append({
+            "time": row["time"], "note": note, "attrs": row["attrs"],
+        })
+
+    items_by_movie = {}
+    movie_order = []
+    for movie, label in order:
+        if movie not in items_by_movie:
+            items_by_movie[movie] = []
+            movie_order.append(movie)
+        items_by_movie[movie].append({"name": label, "slots": by_group[(movie, label)]})
+
+    return [{"name": m, "groups": items_by_movie[m]} for m in movie_order]

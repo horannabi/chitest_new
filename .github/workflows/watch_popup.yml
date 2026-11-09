@@ -4,21 +4,26 @@ on:
   workflow_dispatch:
     inputs:
       target_date:
-        description: "날짜 (20261115). 비우면 텔레그램 /watch 로 지정"
+        description: "날짜 (20261115). 비우면 텔레그램으로 지정한 값 사용"
         required: false
         type: string
+      force:
+        description: "날짜 조건 무시하고 실행"
+        required: false
+        default: false
+        type: boolean
 
-  # watch.py 와 똑같이 6시간 백업 + 스스로 이어받기. 저장소가 분리돼 있어
-  # watch.yml 의 concurrency 와는 전혀 겹치지 않는다.
+  # watch.yml 과 동일한 패턴: 6시간씩 4번 백업 + 분을 정시에서 비켜 둔다.
+  # 평소 교체는 RELAY_AFTER_MIN 이 맡고 cron 은 백업이다.
   schedule:
-    - cron: "20 15 * * *"   # 00:20 KST
-    - cron: "20 21 * * *"   # 06:20 KST
-    - cron: "20 3 * * *"    # 12:20 KST
-    - cron: "20 9 * * *"    # 18:20 KST
+    - cron: "17 15 * * *"   # 00:17 KST
+    - cron: "17 21 * * *"   # 06:17 KST
+    - cron: "17 3 * * *"    # 12:17 KST
+    - cron: "17 9 * * *"    # 18:17 KST
 
 permissions:
-  contents: write
-  actions: write
+  contents: write          # state_popup.json 갱신, health 브랜치 기록
+  actions: write           # 세션이 스스로 다음 실행을 요청(workflow_dispatch)
 
 concurrency:
   group: watch_popup
@@ -41,13 +46,37 @@ jobs:
 
       - run: python watch_popup.py
         env:
+          # --- 대상 ---
           THEATER_CODE: ${{ vars.THEATER_CODE || '1001' }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+          SITE_ORIGIN: ${{ vars.SITE_ORIGIN || 'https://www.cineq.co.kr' }}
           KEYWORDS: ${{ secrets.KEYWORDS }}
+          LABEL: ${{ secrets.LABEL }}
+
+          # --- 날짜 (비워두면 텔레그램 /watch 로 지정) ---
           TARGET_DATE: ${{ inputs.target_date }}
-          POLL_SEC: ${{ vars.POLL_SEC || '20' }}
+
+          # --- 동작 ---
+          MODE: ${{ vars.MODE || 'until' }}
+          POLL_SEC: ${{ vars.POLL_SEC || '10' }}
+          BURST_SEC: ${{ vars.BURST_SEC || '2' }}
+          BURST_WINDOWS: ${{ vars.BURST_WINDOWS }}
+          IDLE_SEC: ${{ vars.IDLE_SEC || '5' }}
           MAX_RUN_MIN: "355"
           RELAY_AFTER_MIN: ${{ vars.RELAY_AFTER_MIN || '120' }}
-          RELAY_WORKFLOW: "watch_popup.yml"
+          HEALTH: ${{ vars.HEALTH || '1' }}
+          HEALTH_BEAT_SEC: ${{ vars.HEALTH_BEAT_SEC || '60' }}
+          GAP_ALERT_SEC: ${{ vars.GAP_ALERT_SEC || '120' }}
+          STALL_SEC: ${{ vars.STALL_SEC || '180' }}
+          STALL_EXIT_SEC: ${{ vars.STALL_EXIT_SEC || '300' }}
+          STALL_MIN_UPTIME_SEC: ${{ vars.STALL_MIN_UPTIME_SEC || '600' }}
+          HEALTHCHECK_URL: ${{ secrets.HEALTHCHECK_URL }}
+          NOTIFY_START: ${{ vars.NOTIFY_START || '0' }}
+          VERBOSE: ${{ vars.VERBOSE || '0' }}
+          FORCE: ${{ inputs.force && '1' || '0' }}
+
+          # --- 알림 ---
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
