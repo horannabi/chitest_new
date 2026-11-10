@@ -449,13 +449,19 @@ def snapshot(cfg, fetcher, target, show_all=False):
         head = "날짜 %s / 전체 %d개" % (ymd, len(items))
         if not items:
             return head + "\n아직 목록이 올라오지 않았습니다."
-        return "\n".join([head, ""] + format_items(items))
+        lines = [head, ""] + format_items(items)
+        if cfg.site_url:
+            lines += ["", cfg.site_url]
+        return "\n".join(lines)
 
     hits = match_keywords(items, cfg.keywords)
     if not hits:
         return ("날짜 %s\n아직 없습니다. (그날 전체 %d개)\n전체를 보려면 /nowall"
                 % (ymd, len(items)))
-    return "\n".join(["날짜 %s / %d건" % (ymd, len(hits)), ""] + format_items(hits))
+    lines = ["날짜 %s / %d건" % (ymd, len(hits)), ""] + format_items(hits)
+    if cfg.site_url:
+        lines += ["", cfg.site_url]
+    return "\n".join(lines)
 
 
 def raise_alert(cfg, state, tg, text):
@@ -763,9 +769,10 @@ def main():
                         log("[테스트] 잔여석 변화 %d건" % len(changed))
                         lines = ["%s  %s -> %s" % (labels.get(k, k), old, new)
                                 for k, old, new in changed]
-                        tg.send("[테스트] 잔여석 변화 %d건\n날짜 %s (%s)\n\n%s"
+                        tg.send("[테스트] 잔여석 변화 %d건\n날짜 %s (%s)\n\n%s\n\n%s"
                                 % (len(changed), target.strftime("%Y%m%d"),
-                                   WDAY[target.weekday()], "\n".join(lines)))
+                                   WDAY[target.weekday()], "\n".join(lines),
+                                   cfg.site_url))
 
                 opened = [k for k, v in free_now.items()
                           if v > 0 and free_before.get(k) == 0]
