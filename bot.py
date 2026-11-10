@@ -421,7 +421,7 @@ def handle_command(text, state, tg, status_fn, now_fn, health_fn=None):
         tg.send(now_fn(d or state.target, head.lstrip("/") == "nowall"))
         return False
 
-    if head in ("/ok", "ok", "/ack", "ack", "확인"):
+    if head in ("/ok", "ok", "/ack", "ack", "확인", "ㅇ", "ㅇㅋ", "ㅇㅇ"):
         if state.ack_date is None:
             tg.send("반복 중인 알림이 없습니다.")
             return False
