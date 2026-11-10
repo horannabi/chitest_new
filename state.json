@@ -4,7 +4,7 @@
   "seatwatch": true,
   "seat_change_all": true,
   "health_off": false,
-  "announced": null,
+  "announced": "20261114",
   "zero_slots": [],
   "slot_ids": {
     "암살자(들)|6관 (146석)|12:50~15:08": "1112420",
@@ -13,8 +13,8 @@
   },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 0,
-  "ack_date": null,
-  "ack_count": 0,
+  "ack_date": "20261114",
+  "ack_count": 1,
   "trace_until": null,
-  "updated_at": "2026-11-10 23:10:41 KST"
+  "updated_at": "2026-11-10 23:10:42 KST"
 }
