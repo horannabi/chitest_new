@@ -9,7 +9,6 @@
     "id:1111611",
     "id:1111612",
     "id:1111613",
-    "id:1111633",
     "id:1111635",
     "id:1111640",
     "id:1112500"
@@ -73,8 +72,8 @@
   },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 0,
-  "ack_date": null,
-  "ack_count": 0,
+  "ack_date": "20261111",
+  "ack_count": 1,
   "trace_until": null,
-  "updated_at": "2026-11-10 18:30:27 KST"
+  "updated_at": "2026-11-10 18:38:41 KST"
 }
