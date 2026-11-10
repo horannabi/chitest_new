@@ -6,11 +6,15 @@
   "health_off": false,
   "announced": null,
   "zero_slots": [],
-  "slot_ids": {},
+  "slot_ids": {
+    "암살자(들)|6관 (146석)|12:50~15:08": "1112420",
+    "암살자(들)|6관 (146석)|15:30~17:48": "1112421",
+    "암살자(들)|6관 (146석)|18:10~20:28": "1112422"
+  },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 0,
   "ack_date": null,
   "ack_count": 0,
   "trace_until": null,
-  "updated_at": "2026-11-10 23:10:39 KST"
+  "updated_at": "2026-11-10 23:10:41 KST"
 }
