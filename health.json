@@ -3,7 +3,7 @@
   "run_id": "42978382961",
   "run_event": "workflow_dispatch",
   "started": "2026-11-11 16:17:39",
-  "last_seen": "2026-11-11 17:24:27",
+  "last_seen": "2026-11-11 17:25:28",
   "checks": 30,
   "gap_at_start_sec": 26,
   "prev_run": "42964706906",
@@ -15,5 +15,5 @@
   "error_count": 30,
   "last_error": "2026-11-11 17:23:34 조회 실패",
   "stage": "조회 실패 후 대기 120초",
-  "stage_idle_sec": 52
+  "stage_idle_sec": 114
 }
