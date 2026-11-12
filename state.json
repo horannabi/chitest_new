@@ -6,11 +6,15 @@
   "health_off": false,
   "announced": "20261116",
   "zero_slots": [],
-  "slot_ids": {},
+  "slot_ids": {
+    "최종면접|1관 (214석)|15:50~17:45": "1113181",
+    "최종면접|1관 (214석)|18:10~20:05": "1113185",
+    "최종면접|1관 (214석)|20:30~22:25": "1113186"
+  },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 1,
   "ack_date": null,
   "ack_count": 0,
   "trace_until": null,
-  "updated_at": "2026-11-12 10:07:44 KST"
+  "updated_at": "2026-11-12 15:51:27 KST"
 }
