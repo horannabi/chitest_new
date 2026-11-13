@@ -725,9 +725,19 @@ def main():
         if slots_changed:
             state.save("slots %d" % len(state.slot_ids))
 
-        if contains_keyword(body, cfg.keywords):
-            hits = match_keywords(items, cfg.keywords)
+        hits = match_keywords(items, cfg.keywords)
 
+        if not hits and contains_keyword(body, cfg.keywords):
+            # ReserveMovieList 는 그 날짜 상영 여부와 무관하게 극장의 영화
+            # 카탈로그를 준다 - 아직 회차가 안 올라온 영화도 제목은 먼저
+            # 보일 수 있다. 원래 이 안전망은 "파싱이 깨졌다" 신호였지만, 이
+            # 소스에서는 "아직 편성 전" 이 훨씬 흔한 원인이라 알림 없이
+            # 로그만 남긴다. 여기서 announced 를 True 로 만들면 실제 회차가
+            # 나중에 올라와도 다시는 못 잡는다(11-09 실측: 20261117 에서 발생).
+            if checks % 30 == 0:
+                log("키워드는 원문에 있으나 아직 회차로 안 잡힙니다 (편성 전으로 보임)")
+
+        if hits:
             if not announced:
                 log("일치 항목 %d건 발견. 알림을 보냅니다." % len(hits))
                 wd.mark("좌석 조회")
