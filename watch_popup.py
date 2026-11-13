@@ -444,9 +444,10 @@ def snapshot(cfg, fetcher, target, show_all=False):
         return "조회에 실패했습니다. 잠시 후 다시 시도하세요."
 
     ymd = target.strftime("%Y%m%d")
+    wday = WDAY[target.weekday()]
 
     if show_all:
-        head = "날짜 %s / 전체 %d개" % (ymd, len(items))
+        head = "날짜 %s (%s) / 전체 %d개" % (ymd, wday, len(items))
         if not items:
             return head + "\n아직 목록이 올라오지 않았습니다."
         lines = [head, ""] + format_items(items)
@@ -456,9 +457,9 @@ def snapshot(cfg, fetcher, target, show_all=False):
 
     hits = match_keywords(items, cfg.keywords)
     if not hits:
-        return ("날짜 %s\n아직 없습니다. (그날 전체 %d개)\n전체를 보려면 /nowall"
-                % (ymd, len(items)))
-    lines = ["날짜 %s / %d건" % (ymd, len(hits)), ""] + format_items(hits)
+        return ("날짜 %s (%s)\n아직 없습니다. (그날 전체 %d개)\n전체를 보려면 /nowall"
+                % (ymd, wday, len(items)))
+    lines = ["날짜 %s (%s) / %d건" % (ymd, wday, len(hits)), ""] + format_items(hits)
     if cfg.site_url:
         lines += ["", cfg.site_url]
     return "\n".join(lines)
