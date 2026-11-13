@@ -4,13 +4,13 @@
   "seatwatch": true,
   "seat_change_all": true,
   "health_off": false,
-  "announced": null,
+  "announced": "20261117",
   "zero_slots": [],
   "slot_ids": {},
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 1,
-  "ack_date": null,
-  "ack_count": 0,
+  "ack_date": "20261117",
+  "ack_count": 1,
   "trace_until": null,
-  "updated_at": "2026-11-13 10:34:45 KST"
+  "updated_at": "2026-11-13 10:34:46 KST"
 }
