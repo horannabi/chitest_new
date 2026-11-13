@@ -1,12 +1,14 @@
 {
   "target_date": "20261118",
-  "tg_offset": 726551829,
+  "tg_offset": 726551832,
   "seatwatch": true,
   "seat_change_all": true,
   "health_off": false,
   "announced": null,
   "zero_slots": [],
   "slot_ids": {
+    "아름다운 초저녁달|(RESERVE)3관 (69석)|10:20~12:26": "1113883",
+    "아름다운 초저녁달|(RESERVE)3관 (69석)|15:20~17:26": "1113885",
     "폭설|1관 (214석)|10:30~12:06": "1110045",
     "폭설|1관 (214석)|12:30~14:06": "1110046",
     "폭설|1관 (214석)|14:30~16:06": "1110047",
@@ -19,5 +21,5 @@
   "ack_date": null,
   "ack_count": 0,
   "trace_until": null,
-  "updated_at": "2026-11-13 10:48:55 KST"
+  "updated_at": "2026-11-13 12:23:57 KST"
 }
