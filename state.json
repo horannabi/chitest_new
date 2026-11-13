@@ -1,6 +1,6 @@
 {
-  "target_date": "20261116",
-  "tg_offset": 726551822,
+  "target_date": "20261117",
+  "tg_offset": 726551824,
   "seatwatch": true,
   "seat_change_all": true,
   "health_off": false,
@@ -62,5 +62,5 @@
   "ack_date": null,
   "ack_count": 0,
   "trace_until": null,
-  "updated_at": "2026-11-13 10:32:11 KST"
+  "updated_at": "2026-11-13 10:34:44 KST"
 }
