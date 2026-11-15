@@ -6,7 +6,6 @@
   "health_off": false,
   "announced": "20261118",
   "zero_slots": [
-    "id:1114681",
     "id:1114721",
     "id:1114722"
   ],
@@ -72,8 +71,8 @@
   },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 1,
-  "ack_date": null,
-  "ack_count": 0,
+  "ack_date": "20261118",
+  "ack_count": 1,
   "trace_until": null,
-  "updated_at": "2026-11-16 08:09:33 KST"
+  "updated_at": "2026-11-16 08:10:08 KST"
 }
