@@ -1,12 +1,14 @@
 {
   "target_date": "20261118",
-  "tg_offset": 726551832,
+  "tg_offset": 726551863,
   "seatwatch": true,
   "seat_change_all": true,
   "health_off": false,
   "announced": null,
   "zero_slots": [],
   "slot_ids": {
+    "극장판 치이카와: 인어 섬의 비밀 (더빙)|10관 (91석)|12:15~14:01": "1114680",
+    "극장판 치이카와: 인어 섬의 비밀 (더빙)|10관 (91석)|14:25~16:11": "1114681",
     "아름다운 초저녁달|(RESERVE)3관 (69석)|10:20~12:26": "1113883",
     "아름다운 초저녁달|(RESERVE)3관 (69석)|12:50~14:56": "1113884",
     "아름다운 초저녁달|(RESERVE)3관 (69석)|15:20~17:26": "1113885",
@@ -28,5 +30,5 @@
   "ack_date": null,
   "ack_count": 0,
   "trace_until": null,
-  "updated_at": "2026-11-13 17:21:55 KST"
+  "updated_at": "2026-11-15 17:10:52 KST"
 }
