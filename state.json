@@ -54,8 +54,8 @@
   },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 1,
-  "ack_date": null,
-  "ack_count": 0,
+  "ack_date": "20261118",
+  "ack_count": 1,
   "trace_until": null,
-  "updated_at": "2026-11-15 17:12:06 KST"
+  "updated_at": "2026-11-15 17:12:08 KST"
 }
