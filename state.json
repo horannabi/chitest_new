@@ -9,7 +9,6 @@
     "id:1115570",
     "id:1115572",
     "id:1115578",
-    "id:1115579",
     "id:1115591"
   ],
   "slot_ids": {
@@ -75,8 +74,8 @@
   },
   "id_since": "2026-11-09 13:40",
   "id_anomalies": 1,
-  "ack_date": null,
-  "ack_count": 0,
+  "ack_date": "20261121",
+  "ack_count": 1,
   "trace_until": null,
-  "updated_at": "2026-11-20 01:25:48 KST"
+  "updated_at": "2026-11-20 03:19:06 KST"
 }
