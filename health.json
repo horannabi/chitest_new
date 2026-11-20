@@ -3,8 +3,8 @@
   "run_id": "44728387529",
   "run_event": "schedule",
   "started": "2026-11-20 20:32:27",
-  "last_seen": "2026-11-20 22:06:40",
-  "checks": 530,
+  "last_seen": "2026-11-20 22:07:42",
+  "checks": 536,
   "gap_at_start_sec": 11,
   "prev_run": "44718810406",
   "relay": {
@@ -15,5 +15,5 @@
   "error_count": 0,
   "last_error": null,
   "stage": "다음 조회 대기",
-  "stage_idle_sec": 5
+  "stage_idle_sec": 2
 }
